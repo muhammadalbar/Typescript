@@ -1,50 +1,59 @@
 import java.util.*;
 
 public class Kota {
+    public static void insertToTree(String input, AVLTree tree, int K){
+        for(int i = 0; i < K; i++) {
+          int num = Integer.parseInt(input.split(" ")[i]);
+          tree.root = tree.insert(tree.root, num);
+        }
+    }
     public static void main(String args[]){
         AVLTree tree = new AVLTree();
         ArrayList arr = new ArrayList();
         Scanner input = new Scanner(System.in);
         int bagian = input.nextInt();
         int K = input.nextInt();
+        input.nextLine(); //This is to skip one line because the previous is reading Int
+        String reading = input.nextLine(); //This is actually reading
+        insertToTree(reading, tree, K);
 
         if(bagian == 1){
-            for(int i = 0; i < K; i++) {
-                int num = input.nextInt();
-                tree.root = tree.insert(tree.root, num);
-            }
             int P = input.nextInt();
             for(int j = 0; j < P; j++){
                 int num2 = input.nextInt();
                 tree.findNeighborhood(tree.root, num2);
             }
         }
-        else if(bagian == 2){
-            for(int i = 0; i < K; i++){
-                int num = input.nextInt();
-                tree.root = tree.insert(tree.root, num);
-            }
+        else if(bagian == 3){
             // int P = input.nextInt();
+
             // for(int j = 0; j < P; j++){
             //     int num2 = input.nextInt();
             //     System.out.println(tree.findNode(tree.root, num2));
 
             // }
-            int M = Integer.parseInt(input.nextLine());
+            int M = input.nextInt();
+            input.nextLine(); //This is to skip one line because the previous is reading Int
             for(int j = 0; j < M; j++){
-                String baca = input.nextLine();
+                String baca = input.nextLine(); //This is actually reading
                 int neighbor = Integer.parseInt(baca.split(" ")[0]);
                 int firstNum = Integer.parseInt(baca.split(" ")[1]);
                 int secondNum = Integer.parseInt(baca.split(" ")[2]);
 
                 for(int q = firstNum; q <= secondNum; q++){
                     tree.deleteNode(tree.root, q);
+                    
                 }
+                // tree.inOrder(tree.root);       
+                // System.out.println("finding neighbor for " + neighbor + " after delete " + firstNum + "-" + secondNum);
                 tree.findNeighborhood(tree.root, neighbor);
+                tree = new AVLTree();
+                insertToTree(reading, tree, K);
             }
         }
     }
 }
+
 
 // Java program for deletion in AVL Tree
 
@@ -171,17 +180,14 @@ class AVLTree{
         return node;
     }
 
-    /* Given a non-empty binary search tree, return the
-    node with minimum key value found in that tree.
-    Note that the entire tree does not need to be
-    searched. */
-    Node minValueNode(Node node)
+    // find the largest node in the tree
+    Node maxValueNode(Node node)
     {
         Node current = node;
 
         /* loop down to find the leftmost leaf */
-        while (current.left != null)
-            current = current.left;
+        while (current.right != null)
+            current = current.right;
 
         return current;
     }
@@ -230,14 +236,14 @@ class AVLTree{
             {
 
                 // node with two children: Get the inorder
-                // successor (smallest in the right subtree)
-                Node temp = minValueNode(root.right);
+                // predecessor (largest in the left subtree)
+                Node temp = maxValueNode(root.left);
 
-                // Copy the inorder successor's data to this node
+                // Copy the inorder predecessor's data to this node
                 root.key = temp.key;
 
-                // Delete the inorder successor
-                root.right = deleteNode(root.right, temp.key);
+                // Delete the inorder predecessor
+                root.left = deleteNode(root.left, temp.key);
             }
         }
 
